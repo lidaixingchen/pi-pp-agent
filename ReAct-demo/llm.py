@@ -7,7 +7,7 @@ load_dotenv()
 
 
 class LLM:
-    """一个简单的语言模型类，用于与OpenAI API进行交互，生成响应,默认支持流式输出。"""
+    """一个ReAct的语言模型类，用于与OpenAI API进行交互，生成响应和工具调用,默认支持流式输出。"""
 
     def __init__(
         self,
