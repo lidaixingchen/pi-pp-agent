@@ -18,21 +18,26 @@ def search(query: str) -> str:
     tavily = TavilyClient(api_key=api_key)
     
     try:
-        # 3. 调用API，include_answer=True会返回一个综合性的回答
-        response = tavily.search(query=query, search_depth="basic", include_answer=True)
-        
+        # 3. 调用API，使用advanced搜索深度获取更准确的结果
+        response = tavily.search(
+            query=query,
+            search_depth="advanced",  # 深度搜索，结果更准确
+            include_answer=True,
+            max_results=5  # 限制结果数量
+        )
+
         # 4. Tavily返回的结果已经非常干净，可以直接使用
         # response['answer'] 是一个基于所有搜索结果的总结性回答
         if response.get("answer"):
             return response["answer"]
-        
+
         # 如果没有综合性回答，则格式化原始结果
         formatted_results = []
         for result in response.get("results", []):
             formatted_results.append(f"- {result['title']}: {result['content']}")
-        
+
         if not formatted_results:
-             return "抱歉，没有找到相关的信息。"
+            return "抱歉，没有找到相关的信息。"
 
         return "根据搜索，为您找到以下信息:\n" + "\n".join(formatted_results)
 

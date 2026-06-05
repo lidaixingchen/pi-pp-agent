@@ -41,13 +41,15 @@ class ToolExecutor:
             descriptions.append(f"{tool.tool_name}({param_desc}): {tool.description}")
         return "\n".join(descriptions)
 
-    def get_tools_schema(self) -> list[dict[str, Any]]:
-        """返回工具的结构化描述，供LLM使用"""
-        schema = []
-        for tool in self.tools.values():
-            schema.append({
-                "tool_name": tool.tool_name,
-                "description": tool.description,
-                "parameters": tool.parameters
-            })
-        return schema
+    def get_tools_schema(self, tool_name: str) -> dict[str, Any] | None:
+        """返回指定工具的结构化描述，供LLM使用"""
+        if tool_name not in self.tools:
+            return None
+
+        tool = self.tools[tool_name]
+        return {
+            "tool_name": tool.tool_name,
+            "description": tool.description,
+            "parameters": tool.parameters
+            }
+    
