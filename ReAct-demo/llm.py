@@ -21,7 +21,12 @@ class LLM:
         self.api_key = api_key or os.getenv("OPENAI_API_KEY", "")
         self.base_url = base_url or os.getenv("OPENAI_BASE_URL", "")
         timeout_str = os.getenv("OPENAI_TIMEOUT", "60")
-        self.time_out = time_out or int(timeout_str) if timeout_str.isdigit() else 60
+        if time_out is not None:
+            self.time_out = time_out
+        elif timeout_str.isdigit():
+            self.time_out = int(timeout_str)
+        else:
+            self.time_out = 60
         if not all([self.model_name, self.api_key, self.base_url]):
             raise ValueError("模型名称、API密钥和基础URL必须提供。请检查环境变量或传入参数。")
         self.client = OpenAI(api_key=self.api_key, base_url=self.base_url, timeout=self.time_out)
@@ -41,12 +46,14 @@ class LLM:
                 for chunk in response:
                     delta = chunk.choices[0].delta if chunk.choices else None
                     if delta and delta.content:
+                        print(delta.content, end="", flush=True)
                         full_response += delta.content
+                print()  # 换行
                 return full_response
             else:
                 content = response.choices[0].message.content if response.choices else None
                 return content or ""
         except Exception as e:
             print(f"生成响应时发生错误: {e}")
-            return "抱歉，生成响应时发生了错误。"
+            return ""
       

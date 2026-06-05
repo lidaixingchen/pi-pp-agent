@@ -1,28 +1,30 @@
 import os
 from llm import LLM
+from react_agent import ReactAgent
 from tool_executor import ToolExecutor, Tool
 from tools.search_tool import search as search_tool
+from tools.calculator_tool import calculate as calculator_tool
 
 def main():
     # 1. 初始化工具执行器
-    toolExecutor = ToolExecutor()
+    tool_executor = ToolExecutor()
+    llm = LLM()
 
     # 2. 注册搜索工具
     search_description = "一个网页搜索引擎。当你需要回答关于时事、事实以及在你的知识库中找不到的信息时，应使用此工具。"
-    toolExecutor.register_tool(Tool("Search", search_description, search_tool, {"query": "搜索查询字符串"}))
-    
-    # 3. 打印可用的工具
-    print("\n--- 可用的工具 ---")
-    print(toolExecutor.get_tools_description())
+    tool_executor.register_tool(Tool("Search", search_description, search_tool, {"query": "搜索查询字符串"}))
 
-    # 4. 工具调用
-    tool_name = "Search"
-    user_query = input("\n请输入搜索查询: ")
-    tool_input = user_query + "\n使用中文回答。"
+    # 3. 注册计算器工具
+    calculator_description = "一个数学计算器。当你需要进行数学计算时使用，支持基本运算(+,-,*,/)和函数(sqrt,sin,cos,log等)。"
+    tool_executor.register_tool(Tool("Calculator", calculator_description, calculator_tool, {"expression": "数学表达式，如 2+3*4 或 sqrt(16)"}))
 
-    observation = toolExecutor.execute_tool(tool_name, query=tool_input)
-    print("--- 观察 (Observation) ---")
-    print(observation)
+    # 4. 初始化ReAct Agent
+    react_agent = ReactAgent(llm, tool_executor)
+
+    # 4. 处理用户问题
+    question = input("请输入您的问题: ")
+    answer = react_agent.run(question)
+    print(f"\n最终答案: {answer}")
 
 if __name__ == "__main__":
     main()
