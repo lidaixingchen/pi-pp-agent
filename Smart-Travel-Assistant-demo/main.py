@@ -34,7 +34,8 @@ def main():
     ]
 
     # agent循环，直到生成Finish动作
-    for _ in range(5):  # 最多循环5次，防止死循环
+    for i in range(5):  # 最多循环5次，防止死循环
+        print(f"\n🔄 第{i+1}轮对话:")
         # 流式输出，实时检测Thought和Action
         full_response = ""
         has_thought = False
