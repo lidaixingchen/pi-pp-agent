@@ -2,6 +2,7 @@ import os
 from llm import LLM
 from react_agent import ReactAgent
 from plan_and_solve_agent import PlanAndSolveAgent
+from reflection_agent import ReflectionAgent
 from tool_executor import ToolExecutor, Tool
 from tools.search_tool import search as search_tool
 from tools.calculator_tool import calculate as calculator_tool
@@ -37,5 +38,15 @@ def main_plan_and_solve_agent():
     answer = plan_and_solve_agent.answer_question(question)
     print(f"\n最终答案: {answer}")
 
+def main_reflection_agent():
+    # 1. 初始化ReflectionAgent
+    llm = LLM()
+    reflection_agent = ReflectionAgent(llm)
+
+    # 2. 处理用户问题
+    question = input("请输入您的问题: ")
+    answer = reflection_agent.answer_question(question)
+    print(f"\n最终答案: {answer}")
+
 if __name__ == "__main__":
-    main_plan_and_solve_agent()
+    main_reflection_agent()
