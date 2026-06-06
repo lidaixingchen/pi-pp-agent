@@ -1,11 +1,12 @@
 import os
 from llm import LLM
 from react_agent import ReactAgent
+from plan_and_solve_agent import PlanAndSolveAgent
 from tool_executor import ToolExecutor, Tool
 from tools.search_tool import search as search_tool
 from tools.calculator_tool import calculate as calculator_tool
 
-def main():
+def main_react_agent():
     # 1. 初始化工具执行器
     tool_executor = ToolExecutor()
     llm = LLM()
@@ -26,5 +27,15 @@ def main():
     answer = react_agent.run(question)
     print(f"\n最终答案: {answer}")
 
+def main_plan_and_solve_agent():
+    # 1. 初始化PlanAndSolveAgent
+    llm = LLM()
+    plan_and_solve_agent = PlanAndSolveAgent(llm)
+
+    # 2. 处理用户问题
+    question = input("请输入您的问题: ")
+    answer = plan_and_solve_agent.answer_question(question)
+    print(f"\n最终答案: {answer}")
+
 if __name__ == "__main__":
-    main()
+    main_plan_and_solve_agent()
