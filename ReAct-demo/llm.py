@@ -33,7 +33,7 @@ class LLM:
 
     def generate_response(self, messages: list[dict[str, str]], temperature: float = 0.7, stream: bool = True) -> str:
         """根据消息列表生成响应。默认使用流式输出，逐块返回内容。"""
-        print(f"{self.model_name}正在生成响应...")
+        # print(f"{self.model_name}正在生成响应...")
         try:
             response = self.client.chat.completions.create(
                 model=self.model_name,

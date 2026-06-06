@@ -11,7 +11,7 @@ class Executor:
         history = []
         step_results = []
         formatted_plan = "\n".join(f"{i+1}. {s}" for i, s in enumerate(plan))
-        for step in plan:
+        for i, step in enumerate(plan):
             current_step = step
             # 构建提示词
             prompt = EXECUTOR_PROMPT_TEMPLATE.format(
@@ -21,13 +21,13 @@ class Executor:
                 current_step=current_step
             )
             # 调用LLM生成响应
-            print(f"\n执行步骤: {current_step}")
+            print(f"\n执行步骤: {i+1}/{len(plan)}: {step}. {current_step}")
             response = self.llm.generate_response([{"role": "user", "content": prompt}])
             if not response:
                 print("❌ LLM调用失败，未能获取执行响应")
                 return "抱歉，执行过程中发生错误。"
             print(f"步骤结果: {response}")
-            history.append(f"步骤: {current_step}\n结果: {response}")
+            history.append(f"步骤: {i+1}. {current_step}\n结果: {response}")
             step_results.append(response)
 
         # 最后一步的结果即为最终答案
