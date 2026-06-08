@@ -1,7 +1,17 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List
 
-from openai import BaseModel
+from pydantic import BaseModel
+
+
+class ToolParameter(BaseModel):
+    """工具参数定义"""
+
+    name: str
+    type: str
+    description: str
+    required: bool = True
+    default: Any = None
 
 
 class Tool(ABC):
@@ -20,11 +30,3 @@ class Tool(ABC):
     def get_parameters(self) -> List[ToolParameter]:
         """获取工具参数定义"""
         pass
-
-class ToolParameter(BaseModel):
-    """工具参数定义"""
-    name: str
-    type: str
-    description: str
-    required: bool = True
-    default: Any = None

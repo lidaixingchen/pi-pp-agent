@@ -1,16 +1,23 @@
-from typing import List, Dict, Any, Optional
-from hello_agents.tools.base import Tool, ToolParameter
+"""工具链 - 支持多个工具的顺序执行"""
+from typing import Any, Optional
 
-from hello_agents.tools.registry import ToolRegistry
+from .registry import ToolRegistry
+
+
 class ToolChain:
     """工具链 - 支持多个工具的顺序执行"""
 
     def __init__(self, name: str, description: str):
         self.name = name
         self.description = description
-        self.steps: List[Dict[str, Any]] = []
+        self.steps: list[dict[str, Any]] = []
 
-    def add_step(self, tool_name: str, input_template: str, output_key: str = None):
+    def add_step(
+        self,
+        tool_name: str,
+        input_template: str,
+        output_key: Optional[str] = None,
+    ) -> None:
         """
         添加工具执行步骤
 
@@ -22,10 +29,15 @@ class ToolChain:
         self.steps.append({
             "tool_name": tool_name,
             "input_template": input_template,
-            "output_key": output_key or f"step_{len(self.steps)}_result"
+            "output_key": output_key or f"step_{len(self.steps)}_result",
         })
 
-    def execute(self, registry: ToolRegistry, initial_input: str, context: Dict[str, Any] = None) -> str:
+    def execute(
+        self,
+        registry: ToolRegistry,
+        initial_input: str,
+        context: Optional[dict[str, Any]] = None,
+    ) -> str:
         """执行工具链"""
         context = context or {}
         context["input"] = initial_input
@@ -56,19 +68,25 @@ class ToolChain:
         print(f"🎉 工具链 '{self.name}' 执行完成")
         return final_result
 
+
 class ToolChainManager:
     """工具链管理器"""
 
     def __init__(self, registry: ToolRegistry):
         self.registry = registry
-        self.chains: Dict[str, ToolChain] = {}
+        self.chains: dict[str, ToolChain] = {}
 
-    def register_chain(self, chain: ToolChain):
+    def register_chain(self, chain: ToolChain) -> None:
         """注册工具链"""
         self.chains[chain.name] = chain
         print(f"✅ 工具链 '{chain.name}' 已注册")
 
-    def execute_chain(self, chain_name: str, input_data: str, context: Dict[str, Any] = None) -> str:
+    def execute_chain(
+        self,
+        chain_name: str,
+        input_data: str,
+        context: Optional[dict[str, Any]] = None,
+    ) -> str:
         """执行指定的工具链"""
         if chain_name not in self.chains:
             return f"❌ 工具链 '{chain_name}' 不存在"
@@ -76,30 +94,30 @@ class ToolChainManager:
         chain = self.chains[chain_name]
         return chain.execute(self.registry, input_data, context)
 
-    def list_chains(self) -> List[str]:
+    def list_chains(self) -> list[str]:
         """列出所有工具链"""
         return list(self.chains.keys())
 
-# 使用示例
+
 def create_research_chain() -> ToolChain:
     """创建一个研究工具链:搜索 -> 计算 -> 总结"""
     chain = ToolChain(
         name="research_and_calculate",
-        description="搜索信息并进行相关计算"
+        description="搜索信息并进行相关计算",
     )
 
     # 步骤1:搜索信息
     chain.add_step(
         tool_name="search",
         input_template="{input}",
-        output_key="search_result"
+        output_key="search_result",
     )
 
     # 步骤2:基于搜索结果进行计算（如果需要）
     chain.add_step(
         tool_name="my_calculator",
         input_template="根据以下信息计算相关数值:{search_result}",
-        output_key="calculation_result"
+        output_key="calculation_result",
     )
 
     return chain
