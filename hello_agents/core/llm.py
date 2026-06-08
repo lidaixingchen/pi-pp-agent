@@ -1,4 +1,4 @@
-"""基础LLM类"""
+"""LLM基类"""
 from typing import Optional
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -62,6 +62,7 @@ class LLM:
         """自动检测API提供商类型，基于API密钥和基础URL的特征进行判断。"""
         # 1. 检查特定提供商的环境变量 (最高优先级)
         if os.getenv("MODELSCOPE_API_KEY"): return "modelscope"
+        if os.getenv("DEEPSEEK_API_KEY"): return "deepseek"
         if os.getenv("OPENAI_API_KEY"): return "openai"
         if os.getenv("ZHIPU_API_KEY"): return "zhipu"
         # ... 其他服务商的环境变量检查
@@ -74,6 +75,7 @@ class LLM:
         if actual_base_url:
             base_url_lower = actual_base_url.lower()
             if "api-inference.modelscope.cn" in base_url_lower: return "modelscope"
+            if "api.deepseek.com" in base_url_lower: return "deepseek"
             if "open.bigmodel.cn" in base_url_lower: return "zhipu"
             if "localhost" in base_url_lower or "127.0.0.1" in base_url_lower:
                 if ":11434" in base_url_lower: return "ollama"
@@ -101,7 +103,12 @@ class LLM:
             resolved_api_key = api_key or os.getenv("MODELSCOPE_API_KEY") or os.getenv("LLM_API_KEY") or ""
             resolved_base_url = base_url or os.getenv("LLM_BASE_URL") or "https://api-inference.modelscope.cn/v1/"
             return resolved_api_key, resolved_base_url
-    
+
+        elif self.provider == "deepseek":
+            resolved_api_key = api_key or os.getenv("DEEPSEEK_API_KEY") or os.getenv("LLM_API_KEY") or ""
+            resolved_base_url = base_url or os.getenv("LLM_BASE_URL") or "https://api.deepseek.com/v1"
+            return resolved_api_key, resolved_base_url
+
         # ... 其他服务商的逻辑
 
         # 默认返回环境变量或空字符串

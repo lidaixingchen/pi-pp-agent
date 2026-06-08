@@ -7,8 +7,8 @@ class Config(BaseModel):
     """HelloAgents配置类"""
     
     # LLM配置
-    default_model: str = "gpt-3.5-turbo"
-    default_provider: str = "openai"
+    default_model: str = "deepseek-v4-flash"
+    default_provider: str = "deepseek"
     temperature: float = 0.7
     max_tokens: Optional[int] = None
     
