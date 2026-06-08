@@ -1,5 +1,5 @@
+"""基础LLM类"""
 from typing import Optional
-
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
