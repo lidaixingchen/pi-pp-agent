@@ -1,4 +1,5 @@
 from langgraph.graph import StateGraph, START, END
+from langgraph.graph.state import CompiledStateGraph
 from langgraph.checkpoint.memory import InMemorySaver
 from nodes.understand_query import understand_query_node
 from nodes.tavily_search import tavily_search_node
@@ -6,7 +7,7 @@ from nodes.generate_answer import generate_answer_node
 from g_state import SearchState
 
 
-def create_search_assistant():
+def create_search_assistant() -> "CompiledStateGraph":
     workflow = StateGraph(SearchState)
     
     # 添加节点

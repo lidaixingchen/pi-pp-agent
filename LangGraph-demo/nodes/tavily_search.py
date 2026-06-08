@@ -1,5 +1,4 @@
-from langchain_core.messages import AIMessage, SystemMessage
-from langchain_openai import ChatOpenAI
+from langchain_core.messages import AIMessage
 from g_state import SearchState
 from config import tavily_client
 
@@ -35,9 +34,10 @@ def tavily_search_node(state: SearchState) -> dict:
             "messages": [AIMessage(content="✅ 搜索完成！正在整理答案...")]
         }
     except Exception as e:
-        print(f"❌ 搜索出错: {e}")
+        import logging
+        logging.error(f"搜索出错: {e}", exc_info=True)
         return {
-            "search_results": f"搜索失败：{e}",
+            "search_results": "搜索失败，请稍后重试",
             "step": "search_failed",
             "messages": [AIMessage(content="❌ 搜索遇到问题，请稍后重试")]
         }

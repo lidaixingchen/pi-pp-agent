@@ -20,8 +20,12 @@ def main():
         "step": "start"
     }
     
-    result = search_assistant.invoke(initial_state, config={"configurable": {"thread_id": "1"}})  # type: ignore
-    
+    try:
+        result = search_assistant.invoke(initial_state, config={"configurable": {"thread_id": "1"}})  # type: ignore
+    except Exception as e:
+        print(f"\n❌ 搜索助手执行失败: {e}")
+        return
+
     print("\n🔔 最终答案:")
     print(result.get("final_answer", "未生成答案"))
 
