@@ -2,11 +2,12 @@
 import re
 from typing import Optional
 
-from core.agent import Agent
-from core.config import Config
-from core.llm import LLM
-from core.message import Message
-from tools.registry import ToolRegistry
+from ..core.agent import Agent
+from ..core.config import Config
+from ..core.llm import LLM
+from ..core.message import Message
+from ..tools.base import Tool
+from ..tools.registry import ToolRegistry
 
 
 class SimpleAgent(Agent):
@@ -25,6 +26,28 @@ class SimpleAgent(Agent):
         self.tool_registry = tool_registry
         self.enable_tool_calling = enable_tool_calling and tool_registry is not None
         print(f"✅ {name} 初始化完成，工具调用: {'启用' if self.enable_tool_calling else '禁用'}")
+
+    def add_tool(self, tool: Tool) -> None:
+        """添加工具到Agent
+
+        Args:
+            tool: 工具实例（如 MCPTool, A2ATool 等）
+
+        Example:
+            >>> agent = SimpleAgent(name="助手", llm=llm)
+            >>> mcp_tool = MCPTool(name="github", server_command=[...])
+            >>> agent.add_tool(mcp_tool)
+        """
+        # 如果没有工具注册表，创建一个
+        if self.tool_registry is None:
+            self.tool_registry = ToolRegistry()
+
+        # 注册工具
+        self.tool_registry.register_tool(tool)
+
+        # 启用工具调用
+        self.enable_tool_calling = True
+        print(f"✅ 工具 '{tool.name}' 已添加到 {self.name}")
 
     def run(self, input_text: str, max_tool_iterations: int = 3, **kwargs) -> str:
         """运行方法 - 实现简单对话逻辑，支持可选工具调用"""

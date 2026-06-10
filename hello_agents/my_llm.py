@@ -4,7 +4,7 @@ from typing import Optional
 
 from openai import OpenAI
 
-from core.llm import LLM
+from .core.llm import LLM
 
 
 class MyLLM(LLM):
